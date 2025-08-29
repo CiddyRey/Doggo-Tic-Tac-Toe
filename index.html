@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doggo Tic Tac Toe</title>
+  <style>
+    body { font-family: Arial; text-align: center; background: #fafafa; }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      grid-template-rows: repeat(3, 120px);
+      gap: 6px;
+      justify-content: center;
+      margin-top: 50px;
+    }
+    .cell {
+      width: 120px;
+      height: 120px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .cell img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐶 Doggo Tic Tac Toe 🐾</h1>
+  <div class="board" id="board"></div>
+  <p id="status"></p>
+
+  <script>
+    const board = document.getElementById("board");
+    const status = document.getElementById("status");
+    const cells = Array(9).fill(null);
+
+    let currentPlayer = "X";
+    const images = {
+      X: "OREO.png",   // put these in the same folder as your HTML
+      O: "SHILOH.png"
+    };
+
+    // Create board
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.addEventListener("click", () => makeMove(i, cell));
+      board.appendChild(cell);
+    }
+
+    function makeMove(i, cell) {
+      if (cells[i]) return; // already filled
+      cells[i] = currentPlayer;
+      const img = document.createElement("img");
+      img.src = images[currentPlayer];
+      cell.appendChild(img);
+
+      if (checkWinner()) {
+        status.textContent = (currentPlayer === "X" ? "Oreo 🐾" : "Shiloh 🐾") + " wins!";
+        setTimeout(() => resetBoard(), 1500);
+        return;
+      }
+      if (cells.every(c => c)) {
+        status.textContent = "It's a tie 🐾";
+        setTimeout(() => resetBoard(), 1500);
+        return;
+      }
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+    }
+
+    function checkWinner() {
+      const wins = [
+        [0,1,2],[3,4,5],[6,7,8], // rows
+        [0,3,6],[1,4,7],[2,5,8], // cols
+        [0,4,8],[2,4,6]          // diagonals
+      ];
+      return wins.some(([a,b,c]) => cells[a] && cells[a] === cells[b] && cells[a] === cells[c]);
+    }
+
+    function resetBoard() {
+      for (let i = 0; i < 9; i++) cells[i] = null;
+      board.querySelectorAll(".cell").forEach(c => c.innerHTML = "");
+      status.textContent = "";
+      currentPlayer = "X";
+    }
+  </script>
+</body>
+</html>
